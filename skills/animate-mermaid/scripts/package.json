@@ -1,0 +1,13 @@
+{
+  "name": "animate-mermaid-skill-cli",
+  "private": true,
+  "type": "module",
+  "description": "Headless CLI for the animate-mermaid agent skill: .mmd -> animated SVG / GIF / PNG",
+  "bin": { "animate-mermaid": "./animate.mjs" },
+  "dependencies": {
+    "animate-mermaid": "^0.1.0",
+    "gifenc": "^1.0.3",
+    "mermaid": "^12.3.0",
+    "puppeteer": "^25.18.1"
+  }
+}

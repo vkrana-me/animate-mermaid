@@ -128,6 +128,25 @@ The share sheet works in mobile browsers, Safari, and Chrome or Edge on Windows,
 - Exported SVGs use the browser's default fonts unless you inline a webfont.
 - Safari may refuse to rasterize HTML labels (`<foreignObject>`) to PNG or GIF. If that happens, render with `mermaidConfig: { htmlLabels: false }`.
 
+## Agent skill
+
+[skills/animate-mermaid](skills/animate-mermaid/) is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview): a `SKILL.md` plus a headless CLI. Coding agents use it to animate diagrams for you, either by writing an animated SVG, GIF or PNG file, or by adding the library to your app with the right snippet for your framework.
+
+```bash
+# Claude Code: personal (all projects) or per project
+cp -r skills/animate-mermaid ~/.claude/skills/
+cp -r skills/animate-mermaid .claude/skills/
+
+# one-time CLI setup
+cd ~/.claude/skills/animate-mermaid/scripts && npm install
+```
+
+For other agents, point them at `skills/animate-mermaid/SKILL.md` (for example from `AGENTS.md`). The CLI works on its own too:
+
+```bash
+node skills/animate-mermaid/scripts/animate.mjs diagram.mmd -o diagram.svg -o diagram.gif --loop
+```
+
 ## Examples
 
 Runnable sample projects live in [examples/](examples/): [plain HTML](examples/html/), [React](examples/react/) and [Svelte](examples/svelte/).
