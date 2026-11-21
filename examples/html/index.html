@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>animate-mermaid · plain HTML</title>
+
+  <!--
+    No bundler. The import map tells the browser where to find the bare
+    "mermaid" and "animate-mermaid" imports.
+    Local: points at this repo's dist/ (run `npm run build` in the repo root first).
+    After publishing, swap for:
+      "animate-mermaid/": "https://cdn.jsdelivr.net/npm/animate-mermaid@0.1.0/dist/"
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "mermaid": "https://cdn.jsdelivr.net/npm/mermaid@12.3.0/dist/mermaid.esm.min.mjs",
+        "gifenc": "https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js",
+        "animate-mermaid": "../../dist/index.js",
+        "animate-mermaid/element": "../../dist/element.js"
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px 16px; color: #1b1b1f; background: #fafafa; }
+    h2 { margin-top: 40px; }
+    .card { background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; padding: 16px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; align-items: center; }
+    button { padding: 6px 12px; border-radius: 6px; border: 1px solid #d4d4d8; background: #fff; cursor: pointer; }
+    button:hover { background: #f4f4f5; }
+    #diagram svg { max-width: 100%; height: auto; }
+    code { background: #f4f4f5; padding: 1px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>animate-mermaid · plain HTML</h1>
+
+  <h2>1. Web component</h2>
+  <p>Import <code>animate-mermaid/element</code> once, then write Mermaid inside the tag.</p>
+  <div class="card">
+    <animated-mermaid id="wc" loop autoplay="visible">
+      flowchart LR
+        client[Client] -->|HTTPS| api[API Gateway]
+        api --> auth[Auth]
+        api --> orders[Orders]
+        orders --> db[(Postgres)]
+        orders -.-> queue[[Queue]]
+        queue --> worker[Worker]
+        worker --> db
+    </animated-mermaid>
+  </div>
+  <div class="row">
+    <button onclick="wc.restart()">Restart</button>
+    <button onclick="wc.pause()">Pause</button>
+    <button onclick="wc.play()">Play</button>
+    <button onclick="wc.toGif().then((b) => wcDownload(b))">Download GIF</button>
+  </div>
+
+  <h2>2. JavaScript API</h2>
+  <p><code>renderAnimated()</code> with full control and export.</p>
+  <div class="card"><div id="diagram"></div></div>
+  <div class="row">
+    <button id="play">Play</button>
+    <button id="pause">Pause</button>
+    <button id="restart">Restart</button>
+    <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek" />
+  </div>
+  <div class="row">
+    <button id="svg">Download animated SVG</button>
+    <button id="png">Download PNG</button>
+    <button id="gif">Make GIF</button>
+  </div>
+  <div id="gif-panel" class="card row" hidden>
+    <img id="gif-preview" alt="Animated diagram preview" style="max-width:280px;border:1px solid #e4e4e7;border-radius:6px" />
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button id="share" style="background:#2563eb;color:#fff;border-color:#2563eb">Share…</button>
+      <button id="gif-download">Download GIF</button>
+      <small id="gif-meta"></small>
+    </div>
+  </div>
+
+  <script type="module">
+    import 'animate-mermaid/element';
+    window.wcDownload = (blob) => download(blob, 'architecture.gif');
+    import { renderAnimated, toSvgString, toPng, toGif, shareFile, canShareFile, download } from 'animate-mermaid';
+
+    const ctrl = await renderAnimated(document.getElementById('diagram'), `
+      flowchart TD
+        A[Start] --> B{Is it working?}
+        B -->|Yes| C[Ship it]
+        B -->|No| D[Debug]
+        D --> E[Fix bug]
+        E --> B
+        C --> F((Done))
+    `, { nodeEffect: 'pop', edgeEffect: 'draw' });
+
+    const $ = (id) => document.getElementById(id);
+    $('play').onclick = () => ctrl.play();
+    $('pause').onclick = () => ctrl.pause();
+    $('restart').onclick = () => ctrl.restart();
+    $('seek').oninput = (e) => { ctrl.pause(); ctrl.seek((e.target.value / 1000) * ctrl.period); };
+    $('svg').onclick = () => download(toSvgString(ctrl.svg), 'diagram.svg');
+    $('png').onclick = async () => download(await toPng(ctrl.svg, { scale: 2 }), 'diagram.png');
+    // Step 1: build the GIF. Step 2: share it on a fresh click (browsers need a recent user gesture).
+    let gif;
+    $('gif').onclick = async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      gif = await toGif(ctrl, { fps: 20, onProgress: (p) => (btn.textContent = `Making GIF ${Math.round(p * 100)}%`) });
+      btn.disabled = false;
+      btn.textContent = 'Make GIF';
+      $('gif-preview').src = URL.createObjectURL(gif);
+      $('share').textContent = canShareFile(gif, 'diagram.gif') ? 'Share… (WhatsApp, Slack, Teams)' : 'Share (downloads file)';
+      $('gif-meta').textContent = `${(gif.size / 1024).toFixed(0)} KB`;
+      $('gif-panel').hidden = false;
+    };
+    $('share').onclick = async () => {
+      const result = await shareFile(gif, { filename: 'diagram.gif', title: 'Diagram' });
+      if (result === 'downloaded') $('gif-meta').textContent = 'Sharing not supported here, so the GIF was downloaded. Drag it into Slack, Teams or WhatsApp.';
+    };
+    $('gif-download').onclick = () => download(gif, 'diagram.gif');
+  </script>
+</body>
+</html>

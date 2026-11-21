@@ -1,0 +1,89 @@
+{
+  "name": "animate-mermaid",
+  "version": "0.1.0",
+  "description": "Smooth, framework-agnostic animations for Mermaid diagrams, with animated SVG, GIF and PNG export.",
+  "keywords": [
+    "mermaid",
+    "animation",
+    "diagram",
+    "svg",
+    "flowchart",
+    "react",
+    "svelte",
+    "web-component",
+    "gif"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vkrana-me/animate-mermaid.git"
+  },
+  "homepage": "https://github.com/vkrana-me/animate-mermaid#readme",
+  "bugs": {
+    "url": "https://github.com/vkrana-me/animate-mermaid/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "./dist/element.*"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    },
+    "./svelte": {
+      "types": "./dist/svelte.d.ts",
+      "import": "./dist/svelte.js",
+      "require": "./dist/svelte.cjs"
+    },
+    "./element": {
+      "types": "./dist/element.d.ts",
+      "import": "./dist/element.js",
+      "require": "./dist/element.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "vite demo",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "peerDependencies": {
+    "mermaid": ">=10.9.0",
+    "react": ">=17"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "mermaid": "^12.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tsup": "^9.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  },
+  "dependencies": {
+    "gifenc": "^1.0.3"
+  }
+}
