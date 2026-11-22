@@ -10,7 +10,11 @@ export default defineConfig({
   },
   format: ['esm', 'cjs'],
   dts: true,
-  sourcemap: true,
+  // No source maps in the published package: dist is readable, unminified JS.
+  sourcemap: false,
+  // Share chunks in CJS too, so every entry uses one copy of the engine
+  // (otherwise each entry has its own instance counter and IDs can collide).
+  splitting: true,
   clean: true,
   target: 'es2020',
   external: ['mermaid', 'gifenc', 'react', 'react/jsx-runtime'],
