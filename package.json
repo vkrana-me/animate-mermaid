@@ -1,6 +1,6 @@
 {
   "name": "animate-mermaid",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Smooth, framework-agnostic animations for Mermaid diagrams, with animated SVG, GIF and PNG export.",
   "keywords": [
     "mermaid",

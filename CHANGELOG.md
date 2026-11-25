@@ -6,6 +6,24 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-25
+
+### Changed
+
+- **Built-in theme colors.** Every palette is now built from its original
+  theme's published colors (Tailwind zinc, Tokyo Night, Catppuccin, Nord,
+  Dracula, GitHub Primer, Solarized, Atom One Dark). Most palettes now also set
+  node fill (`surface`) and border colors. Some accents changed: `dracula` uses
+  pink, `solarized-dark` cyan, `one-dark` blue, `tokyo-night-light` purple.
+  Theme names are unchanged.
+
+### Fixed
+
+- **Themes with several diagrams on a page.** Mermaid's config is global, so a
+  themed and an unthemed diagram rendering at the same time could swap
+  configs, giving a themed diagram Mermaid's default node colors on the theme
+  background. Renders now run one at a time, each with its own config.
+
 ## [0.2.0] - 2026-11-25
 
 ### Added
@@ -15,8 +33,7 @@ All notable changes to this project are documented here. The format follows
   - 15 built-in palettes: `zinc-light`, `zinc-dark`, `tokyo-night`,
     `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`,
     `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`,
-    `github-dark`, `solarized-light`, `solarized-dark`, `one-dark` (colors from
-    [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid), MIT).
+    `github-dark`, `solarized-light`, `solarized-dark`, `one-dark`.
   - Custom themes as `{ bg, fg, line?, accent?, muted?, surface?, border? }`.
     Only `bg` and `fg` are required; the other colors are mixed from them.
   - Arrowheads use the theme's `accent` color and edge labels use `muted`.
@@ -96,7 +113,8 @@ All notable changes to this project are documented here. The format follows
   reference, and a headless CLI (`scripts/animate.mjs`) that turns `.mmd`
   files into animated SVG, GIF or PNG.
 
-[Unreleased]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/vkrana-me/animate-mermaid/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/vkrana-me/animate-mermaid/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/vkrana-me/animate-mermaid/releases/tag/v0.1.0

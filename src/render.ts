@@ -36,8 +36,14 @@ function throwIfAborted(signal?: AbortSignal) {
 }
 
 let counter = 0;
-/** Config last passed to the lazily imported Mermaid (it is global state). */
-let lastKey: string | undefined;
+/** Config last passed to each Mermaid instance (Mermaid's config is global state). */
+const lastKey = new WeakMap<object, string>();
+/**
+ * Mermaid reads its global config when a render runs, so concurrent renders
+ * with different configs (two diagrams with different themes) must not
+ * interleave initialize() and render(). Each render waits for the previous one.
+ */
+let queue: Promise<unknown> = Promise.resolve();
 
 function buildConfig(mermaidConfig: MermaidConfig | undefined, theme: Theme | undefined): MermaidConfig {
   const base: MermaidConfig = { startOnLoad: false };
@@ -65,20 +71,22 @@ export async function renderAnimated(
   throwIfAborted(signal);
   const mermaid = provided ?? (await import('mermaid')).default;
   const config = buildConfig(mermaidConfig, theme);
-  if (provided) {
-    // Your instance, your config: only touch it when asked to.
-    if (mermaidConfig || theme) mermaid.initialize(config);
-  } else {
-    // Re-initialize whenever the config changes, so a themed render
-    // doesn't leak its theme into the next unthemed one.
-    const key = JSON.stringify(config);
-    if (key !== lastKey) {
-      mermaid.initialize(config);
-      lastKey = key;
-    }
-  }
+  const key = JSON.stringify(config);
   const id = `animate-mermaid-${++counter}`;
-  const { svg, bindFunctions } = await mermaid.render(id, code);
+  const run = queue.then(() => {
+    throwIfAborted(signal);
+    // A Mermaid instance you passed is only configured when you ask for it.
+    // Otherwise re-initialize whenever the config changes, so a themed render
+    // doesn't leak its theme into the next unthemed one.
+    const wanted = !provided || mermaidConfig || theme;
+    if (wanted && lastKey.get(mermaid) !== key) {
+      mermaid.initialize(config);
+      lastKey.set(mermaid, key);
+    }
+    return mermaid.render(id, code);
+  });
+  queue = run.catch(() => undefined);
+  const { svg, bindFunctions } = await run;
   throwIfAborted(signal);
   container.innerHTML = svg;
   bindFunctions?.(container);

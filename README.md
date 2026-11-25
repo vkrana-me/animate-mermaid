@@ -113,7 +113,7 @@ renderAnimated(el, src, { theme: { bg: '#0b1020', fg: '#e2e8f0', accent: '#38bdf
 <animated-mermaid theme="nord" edge-motion="dot">flowchart LR; A-->B</animated-mermaid>
 ```
 
-Built-in: `zinc-light`, `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark` (palettes from [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid), MIT).
+Built-in: `zinc-light`, `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark`.
 
 A theme needs only `bg` and `fg`. `line` (edges), `accent` (arrowheads and edge motion), `muted` (edge labels), `surface` (node fill) and `border` are mixed from those two when left out. Values in `mermaidConfig.themeVariables` override the theme. Rendering Mermaid yourself? `mermaid.initialize({ startOnLoad: false, ...themeConfig('dracula') })` gives the same colors, and `THEMES` lists every palette.
 

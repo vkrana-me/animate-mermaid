@@ -21,23 +21,47 @@ export interface ThemeColors {
   border?: string;
 }
 
-/** Built-in palettes. */
+/**
+ * Built-in palettes. Each one maps colors from the original theme's own
+ * published palette onto the diagram slots:
+ * - zinc: Tailwind CSS zinc gray scale
+ * - tokyo-night: Tokyo Night VS Code theme (night, storm and light variants)
+ * - catppuccin: Catppuccin Mocha and Latte flavors
+ * - nord: Nord palette, nord0 to nord10
+ * - dracula: Dracula color spec
+ * - github: GitHub Primer light and dark
+ * - solarized: Solarized base and accent colors
+ * - one-dark: Atom One Dark syntax colors
+ */
 export const THEMES = {
-  'zinc-light': { bg: '#FFFFFF', fg: '#27272A' },
-  'zinc-dark': { bg: '#18181B', fg: '#FAFAFA' },
-  'tokyo-night': { bg: '#1a1b26', fg: '#a9b1d6', line: '#3d59a1', accent: '#7aa2f7', muted: '#565f89' },
-  'tokyo-night-storm': { bg: '#24283b', fg: '#a9b1d6', line: '#3d59a1', accent: '#7aa2f7', muted: '#565f89' },
-  'tokyo-night-light': { bg: '#d5d6db', fg: '#343b58', line: '#34548a', accent: '#34548a', muted: '#9699a3' },
-  'catppuccin-mocha': { bg: '#1e1e2e', fg: '#cdd6f4', line: '#585b70', accent: '#cba6f7', muted: '#6c7086' },
-  'catppuccin-latte': { bg: '#eff1f5', fg: '#4c4f69', line: '#9ca0b0', accent: '#8839ef', muted: '#9ca0b0' },
-  nord: { bg: '#2e3440', fg: '#d8dee9', line: '#4c566a', accent: '#88c0d0', muted: '#616e88' },
-  'nord-light': { bg: '#eceff4', fg: '#2e3440', line: '#aab1c0', accent: '#5e81ac', muted: '#7b88a1' },
-  dracula: { bg: '#282a36', fg: '#f8f8f2', line: '#6272a4', accent: '#bd93f9', muted: '#6272a4' },
-  'github-light': { bg: '#ffffff', fg: '#1f2328', line: '#d1d9e0', accent: '#0969da', muted: '#59636e' },
-  'github-dark': { bg: '#0d1117', fg: '#e6edf3', line: '#3d444d', accent: '#4493f8', muted: '#9198a1' },
-  'solarized-light': { bg: '#fdf6e3', fg: '#657b83', line: '#93a1a1', accent: '#268bd2', muted: '#93a1a1' },
-  'solarized-dark': { bg: '#002b36', fg: '#839496', line: '#586e75', accent: '#268bd2', muted: '#586e75' },
-  'one-dark': { bg: '#282c34', fg: '#abb2bf', line: '#4b5263', accent: '#c678dd', muted: '#5c6370' },
+  // zinc 50/300/400/500/700/800 on white
+  'zinc-light': { bg: '#ffffff', fg: '#18181b', surface: '#fafafa', border: '#d4d4d8', line: '#a1a1aa', accent: '#3f3f46', muted: '#71717a' },
+  // zinc 900 background, 100 text
+  'zinc-dark': { bg: '#18181b', fg: '#f4f4f5', surface: '#27272a', border: '#3f3f46', line: '#71717a', accent: '#d4d4d8', muted: '#a1a1aa' },
+  // background, foreground, blue, terminal black, comment, dim foreground
+  'tokyo-night': { bg: '#1a1b26', fg: '#a9b1d6', surface: '#24283b', border: '#414868', line: '#565f89', accent: '#7aa2f7', muted: '#787c99' },
+  'tokyo-night-storm': { bg: '#24283b', fg: '#a9b1d6', surface: '#292e42', border: '#414868', line: '#565f89', accent: '#7aa2f7', muted: '#787c99' },
+  // light background, foreground, comment, purple
+  'tokyo-night-light': { bg: '#d5d6db', fg: '#343b58', line: '#9699a3', accent: '#5a4a78' },
+  // base, text, surface0, surface1, overlay0, mauve, subtext0
+  'catppuccin-mocha': { bg: '#1e1e2e', fg: '#cdd6f4', surface: '#313244', border: '#45475a', line: '#6c7086', accent: '#cba6f7', muted: '#a6adc8' },
+  // base, text, mantle, surface1, overlay0, mauve, subtext0
+  'catppuccin-latte': { bg: '#eff1f5', fg: '#4c4f69', surface: '#e6e9ef', border: '#bcc0cc', line: '#9ca0b0', accent: '#8839ef', muted: '#6c6f85' },
+  // nord0 bg, nord4 text, nord1 fill, nord2 border, nord3 lines, nord8 accent, nord9 labels
+  nord: { bg: '#2e3440', fg: '#d8dee9', surface: '#3b4252', border: '#434c5e', line: '#4c566a', accent: '#88c0d0', muted: '#81a1c1' },
+  // nord6 bg, nord0 text, nord5 fill, nord4 border, nord3 lines, nord10 accent
+  'nord-light': { bg: '#eceff4', fg: '#2e3440', surface: '#e5e9f0', border: '#d8dee9', line: '#4c566a', accent: '#5e81ac', muted: '#4c566a' },
+  // background, foreground, current line, comment, pink, purple
+  dracula: { bg: '#282a36', fg: '#f8f8f2', surface: '#44475a', border: '#6272a4', line: '#6272a4', accent: '#ff79c6', muted: '#bd93f9' },
+  // canvas, fg, canvas subtle, border, gray 4, accent, fg muted
+  'github-light': { bg: '#ffffff', fg: '#1f2328', surface: '#f6f8fa', border: '#d0d7de', line: '#8c959f', accent: '#0969da', muted: '#656d76' },
+  'github-dark': { bg: '#0d1117', fg: '#e6edf3', surface: '#161b22', border: '#30363d', line: '#6e7681', accent: '#2f81f7', muted: '#7d8590' },
+  // base3 bg, base00 text, base2 fill, base1 border/lines, blue accent
+  'solarized-light': { bg: '#fdf6e3', fg: '#657b83', surface: '#eee8d5', border: '#93a1a1', line: '#93a1a1', accent: '#268bd2', muted: '#839496' },
+  // base03 bg, base0 text, base02 fill, base01 border/lines, cyan accent
+  'solarized-dark': { bg: '#002b36', fg: '#839496', surface: '#073642', border: '#586e75', line: '#586e75', accent: '#2aa198', muted: '#93a1a1' },
+  // background, mono-1 text, selection, mono-3, blue, mono-2
+  'one-dark': { bg: '#282c34', fg: '#abb2bf', border: '#3e4451', line: '#5c6370', accent: '#61afef', muted: '#828997' },
 } as const satisfies Record<string, ThemeColors>;
 
 export type ThemeName = keyof typeof THEMES;

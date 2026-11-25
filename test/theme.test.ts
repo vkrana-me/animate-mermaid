@@ -9,10 +9,10 @@ describe('theme', () => {
   });
 
   it('derives missing slots from bg/fg', () => {
-    const t = resolveTheme('zinc-light');
-    expect(t.bg).toBe('#FFFFFF');
-    expect(t.line).toBe(mix('#27272A', '#FFFFFF', 50));
-    expect(t.accent).toBe(mix('#27272A', '#FFFFFF', 85));
+    const t = resolveTheme({ bg: '#ffffff', fg: '#27272a' });
+    expect(t.line).toBe(mix('#27272a', '#ffffff', 50));
+    expect(t.accent).toBe(mix('#27272a', '#ffffff', 85));
+    expect(resolveTheme('tokyo-night-light').surface).toBe(mix('#343b58', '#d5d6db', 6));
   });
 
   it('keeps explicit slots', () => {
