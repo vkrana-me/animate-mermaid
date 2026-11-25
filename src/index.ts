@@ -14,3 +14,4 @@ export { toGif, type GifExportOptions } from './gif';
 export { shareFile, canShareFile, type ShareOptions, type ShareResult } from './share';
 export type { AnimateOptions, AnimationController, NodeEffect, EdgeEffect, EdgeMotion, Order } from './types';
 export { THEMES, themeConfig, resolveTheme, type Theme, type ThemeName, type ThemeColors } from './theme';
+export { styleNodes, type NodeStyle } from './style';

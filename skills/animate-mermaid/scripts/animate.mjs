@@ -25,6 +25,7 @@ Animation:
   --edge-motion <dash|dot|none>      keep edges moving after they appear (default none)
   --edge-motion-duration <ms>        one motion cycle (default 1000 dash, 2000 dot)
   --edge-motion-color <color>        default: theme accent, else the edge color
+  --node-style <default|2d|3d>       flat nodes, or raised 3D blocks (default: Mermaid's look)
 
 Rendering:
   --theme <name>                     palette: zinc-light, zinc-dark, tokyo-night, tokyo-night-storm,
@@ -70,6 +71,7 @@ function parseArgs(argv) {
       case '--edge-motion': opts.edgeMotion = next(); break;
       case '--edge-motion-duration': opts.edgeMotionDuration = num(next(), a); break;
       case '--edge-motion-color': opts.edgeMotionColor = next(); break;
+      case '--node-style': opts.nodeStyle = next(); break;
       case '--theme': opts.theme = next(); break;
       case '--background': opts.background = next(); break;
       case '--scale': opts.scale = num(next(), a); break;
@@ -207,7 +209,7 @@ try {
     nodeDuration: opts.nodeDuration, edgeDuration: opts.edgeDuration, stagger: opts.stagger,
     loop: opts.loop, loopHold: opts.loopHold, autoplay: false, respectReducedMotion: false,
     edgeMotion: opts.edgeMotion, edgeMotionDuration: opts.edgeMotionDuration, edgeMotionColor: opts.edgeMotionColor,
-    theme: palette,
+    theme: palette, nodeStyle: opts.nodeStyle,
   };
   const info = await page.evaluate(async (src, anim, cfg) => {
     const { renderAnimated } = window.am;

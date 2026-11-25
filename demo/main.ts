@@ -63,6 +63,7 @@ async function render() {
     stage.style.background = theme ? resolveTheme(theme).bg : '';
     ctrl = await renderAnimated(stage, src.value, {
       theme,
+      nodeStyle: $<HTMLSelectElement>('nodeStyle').value as never,
       edgeMotion: $<HTMLSelectElement>('edgeMotion').value as never,
       order: $<HTMLSelectElement>('order').value as never,
       nodeEffect: $<HTMLSelectElement>('nodeEffect').value as never,
@@ -80,7 +81,7 @@ async function render() {
 sample.onchange = () => { src.value = samples[sample.value]; render(); };
 let t: number | undefined;
 src.oninput = () => { clearTimeout(t); t = window.setTimeout(render, 400); };
-for (const id of ['theme', 'edgeMotion', 'order', 'nodeEffect', 'edgeEffect', 'nodeDuration', 'edgeDuration', 'loop']) $(id).onchange = render;
+for (const id of ['theme', 'nodeStyle', 'edgeMotion', 'order', 'nodeEffect', 'edgeEffect', 'nodeDuration', 'edgeDuration', 'loop']) $(id).onchange = render;
 $('play').onclick = () => ctrl?.play();
 $('pause').onclick = () => ctrl?.pause();
 $('restart').onclick = () => ctrl?.restart();

@@ -96,6 +96,7 @@ The element has `play()`, `pause()`, `restart()`, `seek(ms)`, `toSvg()`, `toPng(
 | `edgeMotionColor` | theme accent | Any CSS color. Without a theme, each edge's own color |
 | `theme` | — | Color palette (see [Themes](#themes)). `renderAnimated` and the adapters only |
 | `transparent` | `false` | With `theme`, don't paint the background |
+| `nodeStyle` | `'default'` | `'2d'` flat nodes without shadows, `'3d'` raised blocks (depth in a darker shade of the border, soft shadow, top-lit fill). Works with any shape and theme. `renderAnimated` and the adapters only; use `styleNodes(svg, style)` with `animate()` |
 | `autoplay` | `true` | `true`, `false` (wait for `play()`), or `'visible'` (start on scroll into view) |
 | `respectReducedMotion` | `true` | Skip the animation for reduced-motion users |
 | `mermaid` / `mermaidConfig` | — | Your own Mermaid instance, or config passed to `mermaid.initialize` |
@@ -110,7 +111,7 @@ renderAnimated(el, src, { theme: { bg: '#0b1020', fg: '#e2e8f0', accent: '#38bdf
 ```
 
 ```html
-<animated-mermaid theme="nord" edge-motion="dot">flowchart LR; A-->B</animated-mermaid>
+<animated-mermaid theme="nord" node-style="3d" edge-motion="dot">flowchart LR; A-->B</animated-mermaid>
 ```
 
 Built-in: `zinc-light`, `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark`.

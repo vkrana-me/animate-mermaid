@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { AnimatedMermaid, useAnimatedMermaid, type AnimationController } from 'animate-mermaid/react';
 import {
   toSvgString, toPng, toGif, shareFile, canShareFile, download, THEMES, resolveTheme,
-  type EdgeMotion, type NodeEffect, type Order, type ThemeName,
+  type EdgeMotion, type NodeEffect, type NodeStyle, type Order, type ThemeName,
 } from 'animate-mermaid';
 import { diagrams } from '../../shared/diagrams';
 
@@ -13,6 +13,7 @@ export function App() {
   const [loop, setLoop] = useState(false);
   const [theme, setTheme] = useState<ThemeName | ''>('tokyo-night');
   const [edgeMotion, setEdgeMotion] = useState<EdgeMotion>('dash');
+  const [nodeStyle, setNodeStyle] = useState<NodeStyle>('3d');
   const bg = theme ? resolveTheme(theme).bg : undefined;
   const ctrl = useRef<AnimationController | null>(null);
   const [gifProgress, setGifProgress] = useState<number | null>(null);
@@ -67,6 +68,11 @@ export function App() {
             {Object.keys(THEMES).map((t) => <option key={t}>{t}</option>)}
           </select>
         </label>
+        <label>Node style
+          <select value={nodeStyle} onChange={(e) => setNodeStyle(e.target.value as NodeStyle)}>
+            <option value="default">default</option><option value="2d">2D</option><option value="3d">3D</option>
+          </select>
+        </label>
         <label>Edge motion
           <select value={edgeMotion} onChange={(e) => setEdgeMotion(e.target.value as EdgeMotion)}>
             <option>none</option><option>dash</option><option>dot</option>
@@ -83,6 +89,7 @@ export function App() {
         nodeEffect={nodeEffect}
         theme={theme || undefined}
         edgeMotion={edgeMotion}
+        nodeStyle={nodeStyle}
         style={bg ? { background: bg, borderColor: bg } : undefined}
         loop={loop}
         onError={(e) => console.error(e)}

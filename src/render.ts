@@ -1,6 +1,7 @@
 import type { MermaidConfig } from 'mermaid';
 import { animate } from './animate';
 import { resolveTheme, themeConfig, type Theme } from './theme';
+import { styleNodes, type NodeStyle } from './style';
 import type { AnimateOptions, AnimationController } from './types';
 
 type Mermaid = typeof import('mermaid').default;
@@ -16,6 +17,11 @@ export interface RenderOptions extends AnimateOptions {
    * Values in `mermaidConfig.themeVariables` win over the theme's.
    */
   theme?: Theme;
+  /**
+   * Node look: `'default'` (Mermaid's own), `'2d'` (flat, no shadows) or
+   * `'3d'` (raised blocks with depth, shadow and a top-lit fill). Default `'default'`.
+   */
+  nodeStyle?: NodeStyle;
   /** With `theme`, leave the SVG background transparent instead of painting `bg`. Default false. */
   transparent?: boolean;
   /** Abort a stale render (e.g. the chart changed). The container is left untouched. */
@@ -67,7 +73,7 @@ export async function renderAnimated(
   code: string,
   options: RenderOptions = {},
 ): Promise<AnimationController> {
-  const { mermaid: provided, mermaidConfig, theme, transparent, signal, ...animOptions } = options;
+  const { mermaid: provided, mermaidConfig, theme, transparent, nodeStyle, signal, ...animOptions } = options;
   throwIfAborted(signal);
   const mermaid = provided ?? (await import('mermaid')).default;
   const config = buildConfig(mermaidConfig, theme);
@@ -98,5 +104,10 @@ export async function renderAnimated(
     // Default color for `edgeMotion` overlays.
     el.style.setProperty('--am-motion', c.accent);
   }
-  return animate(el, animOptions);
+  const unstyle = nodeStyle ? styleNodes(el, nodeStyle) : undefined;
+  const ctrl = animate(el, animOptions);
+  if (!unstyle) return ctrl;
+  const destroy = ctrl.destroy;
+  ctrl.destroy = () => { destroy(); unstyle(); };
+  return ctrl;
 }

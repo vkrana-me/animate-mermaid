@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-25
+
+### Added
+
+- **Node styles.** New `nodeStyle` option (`node-style` attribute,
+  `--node-style` CLI flag) for `renderAnimated`, the React component and hook
+  and the Svelte action.
+  - `'2d'`: flat, crisp nodes; Mermaid's drop shadows are removed.
+  - `'3d'`: raised blocks. Each node gets a solid extruded edge in a darker
+    shade of its border, a soft shadow and a top-lit gradient fill. Works on
+    any shape (boxes, diamonds, circles, cylinders, sequence actors) and adapts
+    to light and dark themes.
+  - `'default'` keeps Mermaid's own look.
+  - `styleNodes(svg, style)` applies a style to an SVG you render yourself,
+    before `animate()`. It returns a function that restores the original look.
+  - Demo and React playground have a Node style picker.
+
 ## [0.2.1] - 2026-11-25
 
 ### Changed
@@ -113,7 +130,8 @@ All notable changes to this project are documented here. The format follows
   reference, and a headless CLI (`scripts/animate.mjs`) that turns `.mmd`
   files into animated SVG, GIF or PNG.
 
-[Unreleased]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/vkrana-me/animate-mermaid/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/vkrana-me/animate-mermaid/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/vkrana-me/animate-mermaid/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/vkrana-me/animate-mermaid/compare/v0.1.0...v0.1.1

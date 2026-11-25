@@ -19,7 +19,7 @@ import type { AnimationController } from './types';
 const Base = (typeof HTMLElement !== 'undefined' ? HTMLElement : class {}) as typeof HTMLElement;
 
 export class AnimatedMermaidElement extends Base {
-  static observedAttributes = ['order', 'node-effect', 'edge-effect', 'node-duration', 'edge-duration', 'stagger', 'loop', 'autoplay', 'theme', 'transparent', 'edge-motion', 'edge-motion-duration', 'edge-motion-color'];
+  static observedAttributes = ['order', 'node-effect', 'edge-effect', 'node-duration', 'edge-duration', 'stagger', 'loop', 'autoplay', 'theme', 'transparent', 'edge-motion', 'edge-motion-duration', 'edge-motion-color', 'node-style'];
 
   controller: AnimationController | null = null;
   private _chart: string | null = null;
@@ -52,6 +52,7 @@ export class AnimatedMermaidElement extends Base {
       edgeMotionColor: this.getAttribute('edge-motion-color') ?? undefined,
       theme: (this.getAttribute('theme') as ThemeName) || undefined,
       transparent: this.hasAttribute('transparent'),
+      nodeStyle: (this.getAttribute('node-style') as RenderOptions['nodeStyle']) ?? undefined,
       nodeDuration: num('node-duration'),
       edgeDuration: num('edge-duration'),
       stagger: num('stagger'),
