@@ -58,10 +58,15 @@ export async function toGif(source: AnimationController | SVGSVGElement, options
   const scale = Math.min(options.scale ?? 1, (options.maxWidth ?? 1200) / Math.max(1, width));
 
   const step = 1000 / fps;
+  // With edge motion the finished diagram keeps moving, so the hold is real
+  // frames (rounded to whole motion cycles) instead of one still frame.
+  const motionCycle = isController(source) ? source.motionCycle : 0;
+  const animatedHold = motionCycle > 0 && !loops && holdEnd > 0 && options.duration === undefined;
+  const hold = animatedHold ? Math.max(1, Math.round(holdEnd / motionCycle)) * motionCycle : 0;
   const times: number[] = [];
-  for (let t = 0; t < duration; t += step) times.push(t);
+  for (let t = 0; t < duration + hold; t += step) times.push(t);
   // Final frame: the finished diagram ('end') unless the animation loops back to empty.
-  const last: number | 'end' = loops ? duration : 'end';
+  const last: number | 'end' = loops || animatedHold ? duration + hold : 'end';
 
   const grab = async (frame: number | 'end') => {
     const canvas = await renderFrame(svg, { frame, scale, background });
@@ -97,7 +102,7 @@ export async function toGif(source: AnimationController | SVGSVGElement, options
     if (i % 4 === 3) await tick(); // keep the page responsive
   }
   const end = last === 'end' ? final : await grab(last);
-  write(end.data, end.w, end.h, step + holdEnd, times.length === 0);
+  write(end.data, end.w, end.h, animatedHold ? step : step + holdEnd, times.length === 0);
   options.onProgress?.(1);
 
   gif.finish();

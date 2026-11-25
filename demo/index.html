@@ -12,7 +12,7 @@
     label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 14px; }
     .row { display: flex; gap: 6px; flex-wrap: wrap; }
     button { padding: 6px 10px; cursor: pointer; }
-    #stage { background: white; border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: center; overflow: auto; }
+    #stage { background: white; transition: background .2s; border-radius: 8px; padding: 16px; display: flex; align-items: center; justify-content: center; overflow: auto; }
     #stage svg { max-width: 100%; height: auto; }
     #err { color: #b00020; font-size: 13px; white-space: pre-wrap; }
     @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
@@ -23,6 +23,8 @@
     <aside>
       <select id="sample"></select>
       <textarea id="src" spellcheck="false"></textarea>
+      <label>Theme <select id="theme"><option value="">mermaid default</option></select></label>
+      <label>Edge motion <select id="edgeMotion"><option>none</option><option>dash</option><option>dot</option></select></label>
       <label>Order <select id="order"><option>flow</option><option>position</option><option>together</option></select></label>
       <label>Node effect <select id="nodeEffect"><option>pop</option><option>fade</option><option>slide</option><option>none</option></select></label>
       <label>Edge effect <select id="edgeEffect"><option>draw</option><option>fade</option><option>none</option></select></label>

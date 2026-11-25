@@ -91,9 +91,31 @@ The element has `play()`, `pause()`, `restart()`, `seek(ms)`, `toSvg()`, `toPng(
 | `delay` | `0` | Initial delay (ms) |
 | `easing` / `edgeEasing` | ease-out / ease-in-out | Any CSS easing |
 | `loop` / `loopHold` | `false` / `1500` | Replay forever, holding the finished diagram for `loopHold` ms between runs |
+| `edgeMotion` | `'none'` | `'dash'` (marching dashes) or `'dot'` (a dot travelling along each edge). Edges keep moving toward their arrowheads after they appear, so the direction of flow is always visible |
+| `edgeMotionDuration` | `1000` / `2000` | One motion cycle in ms (dash / dot) |
+| `edgeMotionColor` | theme accent | Any CSS color. Without a theme, each edge's own color |
+| `theme` | — | Color palette (see [Themes](#themes)). `renderAnimated` and the adapters only |
+| `transparent` | `false` | With `theme`, don't paint the background |
 | `autoplay` | `true` | `true`, `false` (wait for `play()`), or `'visible'` (start on scroll into view) |
 | `respectReducedMotion` | `true` | Skip the animation for reduced-motion users |
 | `mermaid` / `mermaidConfig` | — | Your own Mermaid instance, or config passed to `mermaid.initialize` |
+
+## Themes
+
+Pick a built-in palette by name or pass your own colors:
+
+```js
+renderAnimated(el, src, { theme: 'tokyo-night', edgeMotion: 'dash' });
+renderAnimated(el, src, { theme: { bg: '#0b1020', fg: '#e2e8f0', accent: '#38bdf8' } });
+```
+
+```html
+<animated-mermaid theme="nord" edge-motion="dot">flowchart LR; A-->B</animated-mermaid>
+```
+
+Built-in: `zinc-light`, `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark` (palettes from [beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid), MIT).
+
+A theme needs only `bg` and `fg`. `line` (edges), `accent` (arrowheads and edge motion), `muted` (edge labels), `surface` (node fill) and `border` are mixed from those two when left out. Values in `mermaidConfig.themeVariables` override the theme. Rendering Mermaid yourself? `mermaid.initialize({ startOnLoad: false, ...themeConfig('dracula') })` gives the same colors, and `THEMES` lists every palette.
 
 ## Export API
 

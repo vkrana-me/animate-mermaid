@@ -1,4 +1,4 @@
-import { renderAnimated, toSvgString, toPng, toGif, download, type AnimationController } from '../src';
+import { renderAnimated, toSvgString, toPng, toGif, download, THEMES, resolveTheme, type AnimationController, type ThemeName } from '../src';
 
 const samples: Record<string, string> = {
   flowchart: `flowchart TD
@@ -52,13 +52,18 @@ const seek = $<HTMLInputElement>('seek');
 let ctrl: AnimationController | null = null;
 
 for (const name of Object.keys(samples)) sample.add(new Option(name, name));
+for (const name of Object.keys(THEMES)) $<HTMLSelectElement>('theme').add(new Option(name, name));
 src.value = samples.flowchart;
 
 async function render() {
   $('err').textContent = '';
   try {
     ctrl?.destroy();
+    const theme = ($<HTMLSelectElement>('theme').value || undefined) as ThemeName | undefined;
+    stage.style.background = theme ? resolveTheme(theme).bg : '';
     ctrl = await renderAnimated(stage, src.value, {
+      theme,
+      edgeMotion: $<HTMLSelectElement>('edgeMotion').value as never,
       order: $<HTMLSelectElement>('order').value as never,
       nodeEffect: $<HTMLSelectElement>('nodeEffect').value as never,
       edgeEffect: $<HTMLSelectElement>('edgeEffect').value as never,
@@ -75,7 +80,7 @@ async function render() {
 sample.onchange = () => { src.value = samples[sample.value]; render(); };
 let t: number | undefined;
 src.oninput = () => { clearTimeout(t); t = window.setTimeout(render, 400); };
-for (const id of ['order', 'nodeEffect', 'edgeEffect', 'nodeDuration', 'edgeDuration', 'loop']) $(id).onchange = render;
+for (const id of ['theme', 'edgeMotion', 'order', 'nodeEffect', 'edgeEffect', 'nodeDuration', 'edgeDuration', 'loop']) $(id).onchange = render;
 $('play').onclick = () => ctrl?.play();
 $('pause').onclick = () => ctrl?.pause();
 $('restart').onclick = () => ctrl?.restart();

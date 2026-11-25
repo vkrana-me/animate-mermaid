@@ -1,7 +1,9 @@
 import { isAbortError, renderAnimated } from './render';
 import { toPng, toSvgString, type Frame } from './export';
 import { toGif, type GifExportOptions } from './gif';
-import type { AnimateOptions, AnimationController } from './types';
+import type { RenderOptions } from './render';
+import type { ThemeName } from './theme';
+import type { AnimationController } from './types';
 
 /**
  * `<animated-mermaid>` custom element. Works in any framework (Vue, Angular,
@@ -17,7 +19,7 @@ import type { AnimateOptions, AnimationController } from './types';
 const Base = (typeof HTMLElement !== 'undefined' ? HTMLElement : class {}) as typeof HTMLElement;
 
 export class AnimatedMermaidElement extends Base {
-  static observedAttributes = ['order', 'node-effect', 'edge-effect', 'node-duration', 'edge-duration', 'stagger', 'loop', 'autoplay'];
+  static observedAttributes = ['order', 'node-effect', 'edge-effect', 'node-duration', 'edge-duration', 'stagger', 'loop', 'autoplay', 'theme', 'transparent', 'edge-motion', 'edge-motion-duration', 'edge-motion-color'];
 
   controller: AnimationController | null = null;
   private _chart: string | null = null;
@@ -38,13 +40,18 @@ export class AnimatedMermaidElement extends Base {
   attributeChangedCallback() { if (this.isConnected) this.render(); }
   disconnectedCallback() { this.abort?.abort(); this.controller?.destroy(); this.controller = null; }
 
-  private options(): AnimateOptions {
+  private options(): RenderOptions {
     const num = (n: string) => (this.hasAttribute(n) ? Number(this.getAttribute(n)) : undefined);
     const autoplay = this.getAttribute('autoplay');
     return {
-      order: (this.getAttribute('order') as AnimateOptions['order']) ?? undefined,
-      nodeEffect: (this.getAttribute('node-effect') as AnimateOptions['nodeEffect']) ?? undefined,
-      edgeEffect: (this.getAttribute('edge-effect') as AnimateOptions['edgeEffect']) ?? undefined,
+      order: (this.getAttribute('order') as RenderOptions['order']) ?? undefined,
+      nodeEffect: (this.getAttribute('node-effect') as RenderOptions['nodeEffect']) ?? undefined,
+      edgeEffect: (this.getAttribute('edge-effect') as RenderOptions['edgeEffect']) ?? undefined,
+      edgeMotion: (this.getAttribute('edge-motion') as RenderOptions['edgeMotion']) ?? undefined,
+      edgeMotionDuration: num('edge-motion-duration'),
+      edgeMotionColor: this.getAttribute('edge-motion-color') ?? undefined,
+      theme: (this.getAttribute('theme') as ThemeName) || undefined,
+      transparent: this.hasAttribute('transparent'),
       nodeDuration: num('node-duration'),
       edgeDuration: num('edge-duration'),
       stagger: num('stagger'),

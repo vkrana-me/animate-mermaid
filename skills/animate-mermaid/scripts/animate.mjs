@@ -22,9 +22,16 @@ Animation:
   --stagger <ms>                     default 120 (position order)
   --loop                             replay forever (SVG loops, GIF cycle includes hold + fade)
   --loop-hold <ms>                   default 1500
+  --edge-motion <dash|dot|none>      keep edges moving after they appear (default none)
+  --edge-motion-duration <ms>        one motion cycle (default 1000 dash, 2000 dot)
+  --edge-motion-color <color>        default: theme accent, else the edge color
 
 Rendering:
-  --theme <default|dark|forest|neutral|base>
+  --theme <name>                     palette: zinc-light, zinc-dark, tokyo-night, tokyo-night-storm,
+                                     tokyo-night-light, catppuccin-mocha, catppuccin-latte, nord,
+                                     nord-light, dracula, github-light, github-dark, solarized-light,
+                                     solarized-dark, one-dark; or a Mermaid theme: default, dark,
+                                     forest, neutral, base
   --background <color|transparent>   default white for GIF/PNG, none for SVG
   --scale <n>                        GIF default 1, PNG default 2
   --fps <n>                          GIF frames per second (default 20)
@@ -60,6 +67,9 @@ function parseArgs(argv) {
       case '--stagger': opts.stagger = num(next(), a); break;
       case '--loop': opts.loop = true; break;
       case '--loop-hold': opts.loopHold = num(next(), a); break;
+      case '--edge-motion': opts.edgeMotion = next(); break;
+      case '--edge-motion-duration': opts.edgeMotionDuration = num(next(), a); break;
+      case '--edge-motion-color': opts.edgeMotionColor = next(); break;
       case '--theme': opts.theme = next(); break;
       case '--background': opts.background = next(); break;
       case '--scale': opts.scale = num(next(), a); break;
@@ -162,7 +172,10 @@ const source = (await readInput(opts.input)).trim();
 if (!source) fail('input is empty');
 
 let mermaidConfig = { startOnLoad: false };
-if (opts.theme) mermaidConfig.theme = opts.theme;
+const MERMAID_THEMES = ['default', 'dark', 'forest', 'neutral', 'base'];
+// Mermaid's own themes go to mermaid; anything else is an animate-mermaid palette.
+if (opts.theme && MERMAID_THEMES.includes(opts.theme)) mermaidConfig.theme = opts.theme;
+const palette = opts.theme && !MERMAID_THEMES.includes(opts.theme) ? opts.theme : undefined;
 if (opts.config) mermaidConfig = { ...mermaidConfig, ...JSON.parse(await readFile(opts.config, 'utf8')) };
 
 let puppeteer;
@@ -193,6 +206,8 @@ try {
     order: opts.order, nodeEffect: opts.nodeEffect, edgeEffect: opts.edgeEffect,
     nodeDuration: opts.nodeDuration, edgeDuration: opts.edgeDuration, stagger: opts.stagger,
     loop: opts.loop, loopHold: opts.loopHold, autoplay: false, respectReducedMotion: false,
+    edgeMotion: opts.edgeMotion, edgeMotionDuration: opts.edgeMotionDuration, edgeMotionColor: opts.edgeMotionColor,
+    theme: palette,
   };
   const info = await page.evaluate(async (src, anim, cfg) => {
     const { renderAnimated } = window.am;

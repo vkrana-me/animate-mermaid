@@ -23,10 +23,14 @@ Package: `animate-mermaid` (peer dependency: `mermaid` >= 10.9). Source: https:/
 | `edgeEasing` | ease-in-out | CSS easing for edges |
 | `loop` | `false` | replay forever |
 | `loopHold` | `1500` | ms the finished diagram stays before replaying |
+| `edgeMotion` | `'none'` | `'dash'` (marching dashes) or `'dot'` (travelling dot): edges keep moving toward their arrowheads after they appear |
+| `edgeMotionDuration` | `1000` / `2000` | ms per motion cycle (dash / dot) |
+| `edgeMotionColor` | theme accent | any CSS color; without a theme, each edge's own color |
 | `autoplay` | `true` | `false` waits for `play()`; `'visible'` starts on scroll into view |
 | `respectReducedMotion` | `true` | |
 
 `renderAnimated` and the adapters also accept:
+- `theme`: a palette name (`zinc-light`, `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark`) or `{ bg, fg, line?, accent?, muted?, surface?, border? }`. Missing slots are mixed from `fg` and `bg`. Paints the SVG background unless `transparent: true`. `themeConfig(theme)` returns the Mermaid config for your own pipeline
 - `mermaid`: your own Mermaid instance
 - `mermaidConfig`: passed to `mermaid.initialize`, e.g. `{ theme: 'dark' }`
 - `signal`: an `AbortSignal` that cancels a stale render
@@ -155,7 +159,7 @@ export class DiagramComponent {
 </animated-mermaid>
 ```
 
-`<animated-mermaid>` attributes: `order`, `node-effect`, `edge-effect`, `node-duration`, `edge-duration`, `stagger`, `loop`, `autoplay` (`true` / `false` / `visible`). Methods: `play()`, `pause()`, `restart()`, `seek(ms)`, `toSvg()`, `toPng()`, `toGif()`. Events: `ready` (detail is the controller) and `error`.
+`<animated-mermaid>` attributes: `order`, `node-effect`, `edge-effect`, `node-duration`, `edge-duration`, `stagger`, `loop`, `autoplay` (`true` / `false` / `visible`), `theme`, `transparent`, `edge-motion`, `edge-motion-duration`, `edge-motion-color`. Methods: `play()`, `pause()`, `restart()`, `seek(ms)`, `toSvg()`, `toPng()`, `toGif()`. Events: `ready` (detail is the controller) and `error`.
 
 ## Animate an SVG that Mermaid already rendered
 

@@ -1,5 +1,13 @@
 export type NodeEffect = 'pop' | 'fade' | 'slide' | 'none';
 export type EdgeEffect = 'draw' | 'fade' | 'none';
+/**
+ * Continuous motion on every edge once it has appeared, so the direction of
+ * flow stays visible:
+ * - `dash`: dashes march along the edge toward its arrowhead.
+ * - `dot`: a dot travels along the edge toward its arrowhead.
+ * - `none`: static edges (default).
+ */
+export type EdgeMotion = 'dash' | 'dot' | 'none';
 
 /**
  * - `flow`: follow the graph. Roots appear first, each edge draws toward its
@@ -21,6 +29,15 @@ export interface AnimateOptions {
   nodeDuration?: number;
   /** Edge draw duration (ms). Default 500. */
   edgeDuration?: number;
+  /** Continuous edge motion after the entrance. Default `none`. */
+  edgeMotion?: EdgeMotion;
+  /** One motion cycle in ms (one dash step, or one trip of the dot). Default 1000 for `dash`, 2000 for `dot`. */
+  edgeMotionDuration?: number;
+  /**
+   * Motion color. Default: the theme's accent when rendered with `theme`
+   * (CSS variable `--am-motion` on the <svg>), otherwise the edge's own color.
+   */
+  edgeMotionColor?: string;
   /** Gap between items for `position` order (ms). Default 120. */
   stagger?: number;
   /** Delay before the first item (ms). Default 0. */
@@ -48,6 +65,8 @@ export interface AnimationController {
   readonly duration: number;
   /** Length of one full cycle in ms (equals `duration` unless `loop`). */
   readonly period: number;
+  /** Length of one `edgeMotion` cycle in ms, 0 when there is no edge motion. */
+  readonly motionCycle: number;
   play(): void;
   pause(): void;
   restart(): void;

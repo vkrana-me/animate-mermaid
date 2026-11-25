@@ -1,5 +1,6 @@
 import type { MermaidConfig } from 'mermaid';
 import { animate } from './animate';
+import { resolveTheme, themeConfig, type Theme } from './theme';
 import type { AnimateOptions, AnimationController } from './types';
 
 type Mermaid = typeof import('mermaid').default;
@@ -9,6 +10,14 @@ export interface RenderOptions extends AnimateOptions {
   mermaid?: Mermaid;
   /** Passed to `mermaid.initialize()` before rendering. */
   mermaidConfig?: MermaidConfig;
+  /**
+   * Color theme: a built-in name (`'nord'`, `'tokyo-night'`, `'github-dark'`, ...,
+   * see `THEMES`) or your own `{ bg, fg, line?, accent?, muted?, surface?, border? }`.
+   * Values in `mermaidConfig.themeVariables` win over the theme's.
+   */
+  theme?: Theme;
+  /** With `theme`, leave the SVG background transparent instead of painting `bg`. Default false. */
+  transparent?: boolean;
   /** Abort a stale render (e.g. the chart changed). The container is left untouched. */
   signal?: AbortSignal;
 }
@@ -27,7 +36,21 @@ function throwIfAborted(signal?: AbortSignal) {
 }
 
 let counter = 0;
-let initialized = false;
+/** Config last passed to the lazily imported Mermaid (it is global state). */
+let lastKey: string | undefined;
+
+function buildConfig(mermaidConfig: MermaidConfig | undefined, theme: Theme | undefined): MermaidConfig {
+  const base: MermaidConfig = { startOnLoad: false };
+  if (!theme) return { ...base, ...mermaidConfig };
+  const t = themeConfig(theme);
+  return {
+    ...base,
+    ...t,
+    ...mermaidConfig,
+    themeVariables: { ...t.themeVariables, ...mermaidConfig?.themeVariables },
+    themeCSS: (t.themeCSS ?? '') + (mermaidConfig?.themeCSS ?? ''),
+  };
+}
 
 /**
  * Render Mermaid source into `container` and animate it.
@@ -38,12 +61,21 @@ export async function renderAnimated(
   code: string,
   options: RenderOptions = {},
 ): Promise<AnimationController> {
-  const { mermaid: provided, mermaidConfig, signal, ...animOptions } = options;
+  const { mermaid: provided, mermaidConfig, theme, transparent, signal, ...animOptions } = options;
   throwIfAborted(signal);
   const mermaid = provided ?? (await import('mermaid')).default;
-  if (mermaidConfig || (!provided && !initialized)) {
-    mermaid.initialize({ startOnLoad: false, ...mermaidConfig });
-    initialized = true;
+  const config = buildConfig(mermaidConfig, theme);
+  if (provided) {
+    // Your instance, your config: only touch it when asked to.
+    if (mermaidConfig || theme) mermaid.initialize(config);
+  } else {
+    // Re-initialize whenever the config changes, so a themed render
+    // doesn't leak its theme into the next unthemed one.
+    const key = JSON.stringify(config);
+    if (key !== lastKey) {
+      mermaid.initialize(config);
+      lastKey = key;
+    }
   }
   const id = `animate-mermaid-${++counter}`;
   const { svg, bindFunctions } = await mermaid.render(id, code);
@@ -52,5 +84,11 @@ export async function renderAnimated(
   bindFunctions?.(container);
   const el = container.querySelector('svg');
   if (!el) throw new Error('animate-mermaid: Mermaid did not produce an <svg>');
+  if (theme) {
+    const c = resolveTheme(theme);
+    if (!transparent) el.style.backgroundColor = c.bg;
+    // Default color for `edgeMotion` overlays.
+    el.style.setProperty('--am-motion', c.accent);
+  }
   return animate(el, animOptions);
 }

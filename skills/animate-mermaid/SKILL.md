@@ -30,7 +30,7 @@ node <this-skill-dir>/scripts/animate.mjs diagram.mmd -o diagram.svg -o diagram.
 
 - The output format comes from the extension: `.svg` (animated, plays by itself), `.gif` (animated), `.png` (still).
 - Pass `-` instead of a file to read the source from stdin.
-- Useful flags: `--loop`, `--order flow|position|together`, `--node-effect pop|fade|slide|none`, `--edge-effect draw|fade|none`, `--node-duration 450`, `--edge-duration 500`, `--theme default|dark|forest|neutral`, `--background white|transparent|#hex`, `--fps 20`, `--scale 1`, `--frame end|<ms>` (PNG only).
+- Useful flags: `--loop`, `--order flow|position|together`, `--node-effect pop|fade|slide|none`, `--edge-effect draw|fade|none`, `--node-duration 450`, `--edge-duration 500`, `--theme nord|dracula|tokyo-night|github-dark|catppuccin-latte|...` (palettes, or Mermaid's default|dark|forest|neutral), `--edge-motion dash|dot` (edges keep moving toward their arrows), `--background white|transparent|#hex`, `--fps 20`, `--scale 1`, `--frame end|<ms>` (PNG only).
 - Run `node scripts/animate.mjs --help` for the full list.
 - The CLI prints one line per output, for example `wrote diagram.gif (64 frames, 412 KB, 3.1 s animation)`.
 

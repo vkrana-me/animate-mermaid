@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react';
 import { AnimatedMermaid, useAnimatedMermaid, type AnimationController } from 'animate-mermaid/react';
-import { toSvgString, toPng, toGif, shareFile, canShareFile, download, type NodeEffect, type Order } from 'animate-mermaid';
+import {
+  toSvgString, toPng, toGif, shareFile, canShareFile, download, THEMES, resolveTheme,
+  type EdgeMotion, type NodeEffect, type Order, type ThemeName,
+} from 'animate-mermaid';
 import { diagrams } from '../../shared/diagrams';
 
 export function App() {
@@ -8,6 +11,9 @@ export function App() {
   const [order, setOrder] = useState<Order>('flow');
   const [nodeEffect, setNodeEffect] = useState<NodeEffect>('pop');
   const [loop, setLoop] = useState(false);
+  const [theme, setTheme] = useState<ThemeName | ''>('tokyo-night');
+  const [edgeMotion, setEdgeMotion] = useState<EdgeMotion>('dash');
+  const bg = theme ? resolveTheme(theme).bg : undefined;
   const ctrl = useRef<AnimationController | null>(null);
   const [gifProgress, setGifProgress] = useState<number | null>(null);
   const [gif, setGif] = useState<{ blob: Blob; url: string } | null>(null);
@@ -19,7 +25,7 @@ export function App() {
     setGifProgress(0);
     setShareMsg('');
     try {
-      const blob = await toGif(ctrl.current, { fps: 20, onProgress: setGifProgress });
+      const blob = await toGif(ctrl.current, { fps: 20, background: bg, onProgress: setGifProgress });
       setGif((old) => {
         if (old) URL.revokeObjectURL(old.url);
         return { blob, url: URL.createObjectURL(blob) };
@@ -55,6 +61,17 @@ export function App() {
             <option>pop</option><option>fade</option><option>slide</option>
           </select>
         </label>
+        <label>Theme
+          <select value={theme} onChange={(e) => setTheme(e.target.value as ThemeName | '')}>
+            <option value="">mermaid default</option>
+            {Object.keys(THEMES).map((t) => <option key={t}>{t}</option>)}
+          </select>
+        </label>
+        <label>Edge motion
+          <select value={edgeMotion} onChange={(e) => setEdgeMotion(e.target.value as EdgeMotion)}>
+            <option>none</option><option>dash</option><option>dot</option>
+          </select>
+        </label>
         <label><input type="checkbox" checked={loop} onChange={(e) => setLoop(e.target.checked)} /> Loop</label>
       </div>
 
@@ -64,6 +81,9 @@ export function App() {
         chart={diagrams[name]}
         order={order}
         nodeEffect={nodeEffect}
+        theme={theme || undefined}
+        edgeMotion={edgeMotion}
+        style={bg ? { background: bg, borderColor: bg } : undefined}
         loop={loop}
         onError={(e) => console.error(e)}
       />
@@ -75,7 +95,7 @@ export function App() {
         <button onClick={() => ctrl.current && download(toSvgString(ctrl.current.svg), 'diagram.svg')}>
           Download animated SVG
         </button>
-        <button onClick={async () => ctrl.current && download(await toPng(ctrl.current.svg), 'diagram.png')}>
+        <button onClick={async () => ctrl.current && download(await toPng(ctrl.current.svg, { background: bg }), 'diagram.png')}>
           Download PNG
         </button>
         <button onClick={makeGif} disabled={gifProgress !== null}>
